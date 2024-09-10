@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>Hello</h2>
+    <button id="startThreatBtn" onclick="startThreatFun()">Threat Detection</button>
+    <button id="stopThreatBtn" onclick="stopThreatFun()">Stop Detection</button>
+</body>
+<script>
+
+    const startThreatBtn = document.getElementById("startThreatBtn")
+    const stopThreatBtn = document.getElementById("stopThreatBtn")
+
+    stopThreatBtn.style.display = 'none'
+    const startThreatFun = ()=>{
+        stopThreatBtn.style.display="block"
+        startThreatBtn.style.display="none"
+        callApi('/startDetection')
+    }
+    const stopThreatFun = ()=>{
+        startThreatBtn.style.display="block"
+        stopThreatBtn.style.display="none"
+        callApi('/stopDetection')
+    }
+
+    const callApi =(url) =>{
+        baseUrl ='http://localhost:8000'
+        fetch(baseUrl+url).then((res)=>{
+            console.log(res)
+        }).catch((error)=>{
+            console.log(error.msg)
+        })
+    }
+</script>
+</html>

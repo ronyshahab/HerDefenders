@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Time Picker</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f0f0f0;
+      }
+      .container {
+        padding: 1em;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+      }
+
+      #timer {
+        height: 10vh;
+      }
+      .time-picker {
+        display: flex;
+        align-items: center;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+      }
+      .time-picker select {
+        font-size: 18px;
+        padding: 5px;
+        margin: 0 5px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+      }
+      .time-picker select:focus {
+        outline: none;
+        border-color: #007bff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div id="timer"></div>
+      <div class="time-picker">
+        <div>
+          <select id="hour"></select>
+          <span>:</span>
+          <select id="minute"></select>
+        </div>
+        <div class="btnContainer">
+          <button id="startBtn" onclick="startTimerFun()">Start</button>
+          <button id="stopBtn" onclick="stopTimerFun()">Stop</button>
+        </div>
+      </div>
+
+      <div class="phoneContainer">
+        <button id="phoneBtn" onclick="callMe()">Call</button>
+        <button id="pickBtn" onclick="pickMe()">Pick</button>
+      </div>
+    </div>
+
+    <script>
+      const hourSelect = document.getElementById("hour");
+      const minuteSelect = document.getElementById("minute");
+      const startBtn = document.getElementById("startBtn");
+      const stopBtn = document.getElementById("stopBtn");
+      const timer = document.getElementById("timer");
+      const phoneBtn = document.getElementById("phoneBtn")
+      const pickBtn = document.getElementById("pickBtn")
+      let timeId
+      stopBtn.style.display= "none"
+      pickBtn.style.display= "none"
+
+      let hours =hourSelect.value;
+      let minutes = minuteSelect.value;
+      let seconds =0
+      for (let i = 0; i < 24; i++) {
+        const option = document.createElement("option");
+        option.value = i;
+        option.text = i.toString().padStart(2, "0");
+        hourSelect.add(option);
+      }
+
+      for (let i = 1; i < 60; i += 5) {
+        const option = document.createElement("option");
+        option.value = i;
+        option.text = i.toString().padStart(2, "0");
+        minuteSelect.add(option);
+      }
+
+      hourSelect.addEventListener("change", () => {
+        hours= hourSelect.value
+      });
+
+      minuteSelect.addEventListener("change", () => {
+        minutes = minuteSelect.value
+      });
+
+      startTimerFun= ()=>{
+       hours =hourSelect.value;
+       minutes = minuteSelect.value;
+       seconds =0
+        startBtn.style.display="none"
+        stopBtn.style.display="block"
+        decreseTimer()
+      }
+      stopTimerFun= ()=>{
+        timer.innerHTML =null;
+        stopBtn.style.display="none"
+        startBtn.style.display="block"
+        clearTimeout(timeId)
+      }
+      
+      decreseTimer =(stop=false) =>{
+        totalTime = hours *3600 + minutes * 60 + seconds
+
+        totalTime= totalTime-1;
+        
+        hours = Math.floor(totalTime/3600)
+        minutes = Math.floor((totalTime%3600)/60)
+        seconds = Math.floor(totalTime%60) 
+        timer.innerHTML = `<h2> <span>${hours}</span>:<span>${minutes}</span>:<span>${seconds}</span></h2>`;
+        if (totalTime<=0){
+            console.log("Something bad is about to happen.")
+            clearTimeout(timeId)
+            return
+        }
+        timeId = setTimeout(decreseTimer,1000)
+      }
+
+      callMe =()=>{
+        console.log("I am called")
+        phoneBtn.style.display="none"
+        pickBtn.style.display="block"
+        try {
+          fetch('http://localhost:8000/playMusic').then((res)=>{
+            console.log(res)
+          }).catch((error)=>{
+            conosle.log(error.msg)
+          })
+        } catch (error) {
+          console.log(error)
+        }
+      }
+      pickMe =()=>{
+        console.log("I am called")
+        pickBtn.style.display="none"
+        phoneBtn.style.display="block"
+        try {
+          fetch('http://localhost:8000/stopMusic').then((res)=>{
+            console.log(res)
+          }).catch((error)=>{
+            conosle.log(error.msg)
+          })
+        } catch (error) {
+          console.log(error)
+        }
+      }
+    </script>
+  </body>
+</html>
